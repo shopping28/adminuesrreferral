@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>User Control</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #111; color: white; font-family: 'Poppins', sans-serif; padding: 20px; }
+        .back { color: #aaa; text-decoration: none; font-size: 0.9rem; }
+        h2 { color: #00ff00; border-bottom: 1px solid #333; padding-bottom: 10px; }
+        
+        .tabs { margin-bottom: 20px; }
+        .tab-btn { background: none; border: 1px solid #333; color: #aaa; padding: 10px 20px; cursor: pointer; }
+        .active-tab { background: #00ff00; color: black; border-color: #00ff00; font-weight: bold; }
+
+        .user-card { background: #1a1a1a; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #333; }
+        .pending { border-left-color: orange; }
+        .approved { border-left-color: green; }
+        .blocked { border-left-color: red; opacity: 0.7; }
+        
+        .info { font-size: 0.9rem; }
+        .btn-group button { margin-left: 5px; padding: 5px 10px; cursor: pointer; border: none; border-radius: 4px; color: white; }
+        .btn-approve { background: green; }
+        .btn-block { background: red; }
+        .btn-unblock { background: orange; }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back">⬅ Dashboard</a>
+    <h2>USER MANAGEMENT</h2>
+
+    <div class="tabs">
+        <button class="tab-btn active-tab" onclick="filter('pending')">Pending Requests</button>
+        <button class="tab-btn" onclick="filter('approved')">Active Users</button>
+        <button class="tab-btn" onclick="filter('blocked')">Blocked</button>
+    </div>
+
+    <div id="list">Loading...</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyBVwD0U7_QeX8EyOrZ4fm7OG_ow1b391-M", authDomain: "game-f739d.firebaseapp.com", databaseURL: "https://game-f739d-default-rtdb.firebaseio.com", projectId: "game-f739d", storageBucket: "game-f739d.firebasestorage.app", messagingSenderId: "744868437950", appId: "1:744868437950:web:622410843c8aeb229463ef" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        if(sessionStorage.getItem("admin_logged_in") !== "true") window.location.href = "login.html";
+
+        let allUsers = [];
+        let currentFilter = 'pending';
+
+        const listDiv = document.getElementById('list');
+
+        onValue(ref(db, 'users'), (snap) => {
+            allUsers = [];
+            snap.forEach(child => {
+                allUsers.push({ id: child.key, ...child.val() });
+            });
+            render();
+        });
+
+        window.filter = (type) => {
+            currentFilter = type;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
+            event.target.classList.add('active-tab');
+            render();
+        }
+
+        function render() {
+            listDiv.innerHTML = '';
+            const filtered = allUsers.filter(u => u.status === currentFilter);
+            
+            if(filtered.length === 0) { listDiv.innerHTML = '<p style="color:#555;">No users found.</p>'; return; }
+
+            filtered.forEach(u => {
+                const div = document.createElement('div');
+                div.className = `user-card ${u.status}`;
+                
+                let btns = '';
+                if(u.status === 'pending') btns = `<button class="btn-approve" onclick="setStatus('${u.id}', 'approved')">Accept</button> <button class="btn-block" onclick="setStatus('${u.id}', 'blocked')">Reject</button>`;
+                if(u.status === 'approved') btns = `<button class="btn-block" onclick="setStatus('${u.id}', 'blocked')">Block</button>`;
+                if(u.status === 'blocked') btns = `<button class="btn-unblock" onclick="setStatus('${u.id}', 'approved')">Unblock</button>`;
+
+                div.innerHTML = `
+                    <div class="info">
+                        <strong>${u.name}</strong> <br>
+                        Phone: ${u.phone} <br>
+                        Ref: ${u.referralUsed}
+                    </div>
+                    <div class="btn-group">${btns}</div>
+                `;
+                listDiv.appendChild(div);
+            });
+        }
+
+        window.setStatus = (uid, status) => {
+            if(confirm('Are you sure?')) {
+                update(ref(db, 'users/' + uid), { status: status });
+            }
+        }
+    </script>
+</body>
+</html>

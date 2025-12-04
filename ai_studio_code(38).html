@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Game Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #111; color: white; font-family: 'Poppins', sans-serif; padding: 20px; }
+        .back { color: #aaa; text-decoration: none; }
+        .card { background: #1a1a1a; padding: 20px; border-radius: 10px; margin-top: 20px; max-width: 500px; border: 1px solid #333; }
+        label { display: block; margin-top: 10px; color: #aaa; }
+        input { width: 100%; padding: 10px; background: #333; border: 1px solid #444; color: white; margin-top: 5px; box-sizing: border-box; }
+        .btn { background: #00ff00; color: black; border: none; padding: 10px 20px; margin-top: 20px; cursor: pointer; font-weight: bold; width: 100%; }
+        
+        .note { font-size: 0.8rem; color: #ff0055; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back">⬅ Dashboard</a>
+    <h2 style="color: #00ff00;">GAME SETTINGS</h2>
+
+    <div class="card">
+        <h3>⏱ Time Settings</h3>
+        
+        <label>Question View Time (Seconds)</label>
+        <input type="number" id="view-time" value="15">
+
+        <label>Answer Time (Seconds)</label>
+        <input type="number" id="ans-time" value="25">
+        
+        <button class="btn" onclick="saveSettings()">UPDATE SETTINGS</button>
+    </div>
+
+    <div class="note">
+        * বর্তমানে প্রশ্নগুলো ইউজারের ফাইলে সেট করা আছে। আপনি চাইলে ডাটাবেস কানেক্টেড ডাইনামিক প্রশ্ন ফিচার অ্যাড করতে পারেন।
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, update, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyBVwD0U7_QeX8EyOrZ4fm7OG_ow1b391-M", authDomain: "game-f739d.firebaseapp.com", databaseURL: "https://game-f739d-default-rtdb.firebaseio.com", projectId: "game-f739d", storageBucket: "game-f739d.firebasestorage.app", messagingSenderId: "744868437950", appId: "1:744868437950:web:622410843c8aeb229463ef" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        if(sessionStorage.getItem("admin_logged_in") !== "true") window.location.href = "login.html";
+
+        // Load current settings
+        get(ref(db, 'settings/timer')).then(snap => {
+            if(snap.exists()) {
+                document.getElementById('view-time').value = snap.val().view || 15;
+                document.getElementById('ans-time').value = snap.val().answer || 25;
+            }
+        });
+
+        window.saveSettings = () => {
+            const v = document.getElementById('view-time').value;
+            const a = document.getElementById('ans-time').value;
+            
+            update(ref(db, 'settings/timer'), {
+                view: parseInt(v),
+                answer: parseInt(a)
+            }).then(() => alert("Settings Updated!"));
+        }
+    </script>
+</body>
+</html>

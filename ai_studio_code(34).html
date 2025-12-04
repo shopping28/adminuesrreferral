@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #111; color: white; font-family: 'Poppins', sans-serif; padding: 20px; margin: 0; }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 30px; }
+        h1 { margin: 0; color: #00ff00; text-shadow: 0 0 10px rgba(0,255,0,0.3); }
+        .logout-btn { background: #ff0055; color: white; border: none; padding: 10px 20px; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .card { background: #1a1a1a; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; transition: 0.3s; border: 1px solid #333; position: relative; overflow: hidden; }
+        .card:hover { border-color: #00ff00; transform: translateY(-5px); box-shadow: 0 5px 20px rgba(0,255,0,0.1); }
+        .card h3 { margin: 10px 0 0 0; font-size: 1.2rem; }
+        .icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+        
+        .badge { position: absolute; top: 10px; right: 10px; background: red; color: white; padding: 2px 8px; border-radius: 10px; font-size: 0.8rem; display: none; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ADMIN DASHBOARD</h1>
+        <button class="logout-btn" onclick="logout()">LOGOUT</button>
+    </div>
+
+    <div class="grid">
+        <div class="card" onclick="location.href='uesr.html'">
+            <span class="badge" id="req-badge">0</span>
+            <span class="icon">👥</span>
+            <h3>User Management</h3>
+        </div>
+        <div class="card" onclick="location.href='leaderboard_control.html'">
+            <span class="icon">🏆</span>
+            <h3>Leaderboard Control</h3>
+        </div>
+        <div class="card" onclick="location.href='question.html'">
+            <span class="icon">❓</span>
+            <h3>Question & Time</h3>
+        </div>
+        <div class="card" onclick="location.href='referral.html'">
+            <span class="icon">🎟</span>
+            <h3>Referral Codes</h3>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyBVwD0U7_QeX8EyOrZ4fm7OG_ow1b391-M", authDomain: "game-f739d.firebaseapp.com", databaseURL: "https://game-f739d-default-rtdb.firebaseio.com", projectId: "game-f739d", storageBucket: "game-f739d.firebasestorage.app", messagingSenderId: "744868437950", appId: "1:744868437950:web:622410843c8aeb229463ef" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Check Access
+        if(sessionStorage.getItem("admin_logged_in") !== "true") window.location.href = "login.html";
+
+        // Count Pending Requests
+        onValue(ref(db, 'users'), (snap) => {
+            let count = 0;
+            snap.forEach(c => { if(c.val().status === 'pending') count++; });
+            const badge = document.getElementById('req-badge');
+            if(count > 0) {
+                badge.style.display = 'block';
+                badge.innerText = count;
+            } else badge.style.display = 'none';
+        });
+
+        window.logout = () => {
+            sessionStorage.clear();
+            window.location.href = "login.html";
+        }
+    </script>
+</body>
+</html>

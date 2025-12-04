@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <title>Referral Codes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        body { background: #111; color: white; font-family: 'Poppins', sans-serif; padding: 20px; }
+        .back { color: #aaa; text-decoration: none; }
+        .container { max-width: 500px; margin: 20px 0; }
+        input { padding: 10px; background: #222; border: 1px solid #444; color: white; width: 70%; }
+        button { padding: 10px; background: #00ff00; border: none; font-weight: bold; cursor: pointer; width: 25%; }
+        
+        ul { list-style: none; padding: 0; margin-top: 20px; }
+        li { background: #1a1a1a; padding: 10px; margin-bottom: 5px; display: flex; justify-content: space-between; border-left: 3px solid #00ff00; }
+        .del-btn { color: red; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <a href="home.html" class="back">⬅ Dashboard</a>
+    <h2 style="color: #00ff00;">REFERRAL CODES</h2>
+
+    <div class="container">
+        <input type="text" id="new-code" placeholder="Enter new code (e.g. AGENT007)">
+        <button onclick="addCode()">ADD</button>
+
+        <ul id="code-list"></ul>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+        import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyBVwD0U7_QeX8EyOrZ4fm7OG_ow1b391-M", authDomain: "game-f739d.firebaseapp.com", databaseURL: "https://game-f739d-default-rtdb.firebaseio.com", projectId: "game-f739d", storageBucket: "game-f739d.firebasestorage.app", messagingSenderId: "744868437950", appId: "1:744868437950:web:622410843c8aeb229463ef" };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        if(sessionStorage.getItem("admin_logged_in") !== "true") window.location.href = "login.html";
+
+        const codeList = document.getElementById('code-list');
+
+        onValue(ref(db, 'settings/referralCodes'), (snap) => {
+            codeList.innerHTML = '';
+            if(snap.exists()) {
+                snap.forEach(c => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${c.val()}</span>
+                        <span class="del-btn" onclick="delCode('${c.key}')">✖</span>
+                    `;
+                    codeList.appendChild(li);
+                });
+            } else {
+                codeList.innerHTML = '<p>No codes active. Default: ADMIN123</p>';
+            }
+        });
+
+        window.addCode = () => {
+            const val = document.getElementById('new-code').value;
+            if(val) {
+                push(ref(db, 'settings/referralCodes'), val);
+                document.getElementById('new-code').value = '';
+            }
+        }
+
+        window.delCode = (key) => {
+            if(confirm('Delete this code?')) remove(ref(db, 'settings/referralCodes/' + key));
+        }
+    </script>
+</body>
+</html>
