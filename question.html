@@ -100,7 +100,7 @@
                     const catId = c.key;
                     const div = document.createElement('div');
                     div.className = 'cat-item';
-                    const isChecked = activeCats.includes(catName) ? 'checked' : ''; // Store Name, not ID for API
+                    const isChecked = activeCats.includes(catName) ? 'checked' : ''; 
                     
                     div.innerHTML = `
                         <label style="margin:0; cursor:pointer;">
@@ -138,7 +138,6 @@
         window.saveActiveCats = () => {
             const selected = [];
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(c => selected.push(c.value));
-            // Save Names directly because user panel needs name for API prompt
             update(configRef, { activeCats: selected.join(',') }).then(() => alert("✅ ক্যাটাগরি আপডেট হয়েছে!"));
         }
     </script>
