@@ -3,33 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Question Generator</title>
+    <title>Game Settings & Category</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&family=Orbitron:wght@500&display=swap" rel="stylesheet">
     <style>
         body { background: #050505; color: white; font-family: 'Hind Siliguri', sans-serif; padding: 20px; margin: 0; }
         .container { max-width: 800px; margin: 0 auto; }
-        
         .header { display: flex; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
         .back-btn { text-decoration: none; color: #aaa; font-size: 1.2rem; margin-right: 15px; }
         h2 { margin: 0; color: #00ff00; font-family: 'Orbitron', sans-serif; }
-
         .card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
         h3 { color: #00f2ff; margin-top: 0; border-bottom: 1px solid #222; padding-bottom: 10px; }
-
         label { display: block; color: #ccc; margin-top: 10px; font-size: 0.9rem; }
         input { width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-top: 5px; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
-        
         .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; font-family: 'Hind Siliguri', sans-serif; transition: 0.3s; }
         .btn:hover { transform: scale(1.02); }
         .btn-green { background: #00ff00; color: black; }
-        .btn-magic { background: linear-gradient(90deg, #6a11cb 0%, #2575fc 100%); color: white; box-shadow: 0 0 15px rgba(100, 100, 255, 0.3); }
-
+        .btn-blue { background: #00f2ff; color: black; }
         .cat-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
         .cat-item { background: #1a1a1a; padding: 10px; border: 1px solid #333; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
-        
-        /* Loader */
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #00f2ff; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; margin-right: 10px; display: none; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -37,54 +28,45 @@
     <div class="container">
         <div class="header">
             <a href="home.html" class="back-btn">⬅</a>
-            <h2>AI QUESTION MANAGER</h2>
+            <h2>GAME CONTROLLER</h2>
         </div>
 
         <!-- 1. Game Settings -->
         <div class="card">
             <h3>⚙️ গেম সেটিংস</h3>
             <div style="display:flex; gap:10px;">
-                <div style="flex:1;"><label>Questions Limit</label><input type="number" id="q-limit" value="10"></div>
-                <div style="flex:1;"><label>View Time (Sec)</label><input type="number" id="view-time" value="15"></div>
-                <div style="flex:1;"><label>Answer Time (Sec)</label><input type="number" id="ans-time" value="25"></div>
+                <div style="flex:1;"><label>প্রশ্ন সংখ্যা</label><input type="number" id="q-limit" value="10"></div>
+                <div style="flex:1;"><label>প্রশ্ন দেখার সময় (সে:)</label><input type="number" id="view-time" value="15"></div>
+                <div style="flex:1;"><label>উত্তর দেওয়ার সময় (সে:)</label><input type="number" id="ans-time" value="25"></div>
             </div>
             <div style="display:flex; gap:10px;">
-                <div style="flex:1;"><label>Start Time</label><input type="datetime-local" id="start-time"></div>
-                <div style="flex:1;"><label>End Time</label><input type="datetime-local" id="end-time"></div>
+                <div style="flex:1;"><label>শুরুর সময়</label><input type="datetime-local" id="start-time"></div>
+                <div style="flex:1;"><label>শেষের সময়</label><input type="datetime-local" id="end-time"></div>
             </div>
             <button class="btn btn-green" onclick="saveConfig()">সেটিংস সেভ করুন</button>
         </div>
 
-        <!-- 2. AI Generator -->
+        <!-- 2. Add Category -->
         <div class="card">
-            <h3>🤖 AI জেনারেটর (Magic)</h3>
-            <p style="color: #aaa; font-size: 0.9rem;">এখানে ক্যাটাগরির নাম লিখুন, AI অটোমেটিক প্রশ্ন বানিয়ে ডাটাবেসে সেভ করবে।</p>
+            <h3>📂 ক্যাটাগরি তৈরি করুন</h3>
+            <p style="color:#aaa; font-size:0.9rem;">এখানে শুধু বিষয় লিখুন। গেম শুরুর সময় API এই বিষয়ের ওপর প্রশ্ন বানাবে।</p>
             
-            <label>ক্যাটাগরির নাম (বিষয়)</label>
-            <input type="text" id="ai-topic" placeholder="যেমন: বাংলাদেশের ইতিহাস, মহাকাশ বিজ্ঞান, ক্রিকেট">
-            
-            <label>API Key (Gemini)</label>
-            <input type="password" id="api-key" value="AIzaSyCovUDq2hDYJ30MRQa58XHhp0A0XUIlzqs" placeholder="Enter Gemini API Key">
-
-            <button class="btn btn-magic" onclick="generateWithAI()">
-                <div class="loader" id="ai-loader"></div> ✨ প্রশ্ন তৈরি করুন এবং সেভ করুন
-            </button>
-            <p id="ai-status" style="margin-top: 10px; color: #00f2ff;"></p>
+            <input type="text" id="new-cat" placeholder="বিষয় লিখুন (যেমন: বাংলাদেশ, মহাকাশ, ফুটবল)">
+            <button class="btn btn-blue" onclick="addCategory()">ক্যাটাগরি যুক্ত করুন</button>
         </div>
 
         <!-- 3. Active Categories -->
         <div class="card">
-            <h3>📂 ক্যাটাগরি লিস্ট</h3>
-            <p style="font-size: 0.8rem; color: #777;">যেগুলোতে টিক দিবেন, গেমের মধ্যে শুধু সেই টপিকের প্রশ্ন আসবে।</p>
-            
+            <h3>✅ সক্রিয় ক্যাটাগরি</h3>
+            <p style="font-size: 0.8rem; color: #777;">যেগুলোতে টিক দিবেন, ইউজাররা সেই বিষয়ের ওপর প্রশ্ন পাবে।</p>
             <div class="cat-list" id="cat-list-div">Loading...</div>
-            <button class="btn btn-green" onclick="saveActiveCats()">ক্যাটাগরি আপডেট করুন</button>
+            <button class="btn btn-green" onclick="saveActiveCats()">আপডেট করুন</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getDatabase, ref, update, push, onValue, set, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+        import { getDatabase, ref, update, push, onValue, get, remove } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBVwD0U7_QeX8EyOrZ4fm7OG_ow1b391-M", authDomain: "game-f739d.firebaseapp.com", databaseURL: "https://game-f739d-default-rtdb.firebaseio.com", projectId: "game-f739d", storageBucket: "game-f739d.firebasestorage.app", messagingSenderId: "744868437950", appId: "1:744868437950:web:622410843c8aeb229463ef" };
         const app = initializeApp(firebaseConfig);
@@ -95,7 +77,7 @@
         const configRef = ref(db, 'settings/gameConfig');
         const catRef = ref(db, 'categories');
 
-        // Load Data
+        // Load Settings
         onValue(configRef, (snap) => {
             const d = snap.val();
             if(d) {
@@ -107,10 +89,10 @@
             }
         });
 
+        // Load Categories
         onValue(catRef, (snap) => {
             const list = document.getElementById('cat-list-div');
             list.innerHTML = '';
-            
             get(ref(db, 'settings/gameConfig/activeCats')).then(activeSnap => {
                 const activeCats = activeSnap.val() ? activeSnap.val().split(',') : [];
                 snap.forEach(c => {
@@ -118,8 +100,14 @@
                     const catId = c.key;
                     const div = document.createElement('div');
                     div.className = 'cat-item';
-                    const isChecked = activeCats.includes(catId) ? 'checked' : '';
-                    div.innerHTML = `<label style="margin:0; cursor:pointer;"><input type="checkbox" value="${catId}" ${isChecked}> ${catName}</label>`;
+                    const isChecked = activeCats.includes(catName) ? 'checked' : ''; // Store Name, not ID for API
+                    
+                    div.innerHTML = `
+                        <label style="margin:0; cursor:pointer;">
+                            <input type="checkbox" value="${catName}" ${isChecked}> ${catName}
+                        </label>
+                        <span onclick="delCat('${catId}')" style="color:red; cursor:pointer;">✖</span>
+                    `;
                     list.appendChild(div);
                 });
             });
@@ -135,72 +123,23 @@
             }).then(() => alert("✅ সেটিংস সেভ হয়েছে!"));
         }
 
+        window.addCategory = () => {
+            const name = document.getElementById('new-cat').value;
+            if(name) {
+                push(catRef, { name: name });
+                document.getElementById('new-cat').value = '';
+            }
+        }
+
+        window.delCat = (key) => {
+            if(confirm("Delete this category?")) remove(ref(db, 'categories/' + key));
+        }
+
         window.saveActiveCats = () => {
             const selected = [];
             document.querySelectorAll('input[type="checkbox"]:checked').forEach(c => selected.push(c.value));
+            // Save Names directly because user panel needs name for API prompt
             update(configRef, { activeCats: selected.join(',') }).then(() => alert("✅ ক্যাটাগরি আপডেট হয়েছে!"));
-        }
-
-        // --- AI GENERATION LOGIC ---
-        window.generateWithAI = async () => {
-            const topic = document.getElementById('ai-topic').value;
-            const apiKey = document.getElementById('api-key').value;
-            const loader = document.getElementById('ai-loader');
-            const status = document.getElementById('ai-status');
-
-            if(!topic || !apiKey) return alert("বিষয় এবং API Key প্রয়োজন!");
-
-            loader.style.display = 'inline-block';
-            status.innerText = "AI প্রশ্ন তৈরি করছে... অপেক্ষা করুন (১০-১৫ সেকেন্ড)";
-
-            const prompt = `
-                Generate 15 hard/premium multiple choice questions in Bengali about '${topic}'.
-                Format strictly as a JSON array. 
-                Structure: [{"q": "Question text in Bengali", "a": ["Option1", "Option2", "Option3", "Option4"], "c": "Exact Correct Option Text"}]
-                Do NOT use markdown. Just raw JSON.
-            `;
-
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-
-                const data = await response.json();
-                let text = data.candidates[0].content.parts[0].text;
-                
-                // Clean JSON
-                text = text.replace(/```json/g, '').replace(/```/g, '').trim();
-                const questions = JSON.parse(text);
-
-                // 1. Create Category
-                const newCatRef = await push(catRef, { name: topic });
-                const catId = newCatRef.key;
-
-                // 2. Save Questions
-                const qRef = ref(db, 'questions');
-                let count = 0;
-                for(let q of questions) {
-                    await push(qRef, {
-                        category: catId,
-                        q: q.q,
-                        a: q.a,
-                        c: q.c
-                    });
-                    count++;
-                }
-
-                status.innerText = `✅ সফল! "${topic}" ক্যাটাগরি তৈরি হয়েছে এবং ${count} টি প্রশ্ন ডাটাবেসে সেভ হয়েছে।`;
-                document.getElementById('ai-topic').value = '';
-
-            } catch (error) {
-                console.error(error);
-                status.innerText = "❌ ত্রুটি হয়েছে। আবার চেষ্টা করুন।";
-                alert("API Error: " + error.message);
-            } finally {
-                loader.style.display = 'none';
-            }
         }
     </script>
 </body>
