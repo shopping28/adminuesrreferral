@@ -2,69 +2,201 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>Referral Codes</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Referral Codes - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
     <style>
-        body { background: #111; color: white; font-family: 'Poppins', sans-serif; padding: 20px; }
-        .back { color: #aaa; text-decoration: none; }
-        .container { max-width: 500px; margin: 20px 0; }
-        input { padding: 10px; background: #222; border: 1px solid #444; color: white; width: 70%; }
-        button { padding: 10px; background: #00ff00; border: none; font-weight: bold; cursor: pointer; width: 25%; }
+        body {
+            background: #111;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 10px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #aaa;
+            font-size: 0.9rem;
+            transition: 0.3s;
+        }
+        .back-btn:hover { color: #00ff00; }
+
+        h2 { margin: 0; color: #00ff00; text-shadow: 0 0 10px rgba(0, 255, 0, 0.3); }
+
+        /* Input Area */
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #333;
+        }
+
+        input {
+            flex: 1;
+            padding: 12px;
+            background: #000;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+        }
+        input:focus { border-color: #00ff00; }
+
+        .add-btn {
+            background: #00ff00;
+            color: black;
+            border: none;
+            padding: 0 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .add-btn:hover { background: #00cc00; box-shadow: 0 0 15px #00ff00; }
+
+        /* List Area */
+        ul { list-style: none; padding: 0; margin: 0; }
         
-        ul { list-style: none; padding: 0; margin-top: 20px; }
-        li { background: #1a1a1a; padding: 10px; margin-bottom: 5px; display: flex; justify-content: space-between; border-left: 3px solid #00ff00; }
-        .del-btn { color: red; cursor: pointer; font-weight: bold; }
+        li {
+            background: #1a1a1a;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #00ff00;
+            transition: 0.3s;
+        }
+        li:hover { transform: translateX(5px); background: #222; }
+
+        .code-text { font-weight: bold; letter-spacing: 1px; font-size: 1.1rem; }
+        
+        .del-btn {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff4444;
+            border: 1px solid #ff4444;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .del-btn:hover { background: #ff4444; color: white; }
+
+        .empty-msg { color: #555; text-align: center; margin-top: 20px; }
     </style>
 </head>
 <body>
-    <a href="home.html" class="back">⬅ Dashboard</a>
-    <h2 style="color: #00ff00;">REFERRAL CODES</h2>
 
     <div class="container">
-        <input type="text" id="new-code" placeholder="Enter new code (e.g. AGENT007)">
-        <button onclick="addCode()">ADD</button>
+        <div class="header">
+            <a href="home.html" class="back-btn">⬅ Dashboard</a>
+            <h2>REFERRAL CODES</h2>
+        </div>
 
-        <ul id="code-list"></ul>
+        <!-- Add New Code -->
+        <div class="input-group">
+            <input type="text" id="new-code" placeholder="Enter new code (e.g. VIP2024)">
+            <button class="add-btn" onclick="addCode()">ADD</button>
+        </div>
+
+        <!-- List -->
+        <ul id="code-list">
+            <p class="empty-msg">Loading codes...</p>
+        </ul>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getDatabase, ref, onValue, push, remove } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
+        // Firebase Config
         const firebaseConfig = { apiKey: "AIzaSyBVwD0U7_QeX8EyOrZ4fm7OG_ow1b391-M", authDomain: "game-f739d.firebaseapp.com", databaseURL: "https://game-f739d-default-rtdb.firebaseio.com", projectId: "game-f739d", storageBucket: "game-f739d.firebasestorage.app", messagingSenderId: "744868437950", appId: "1:744868437950:web:622410843c8aeb229463ef" };
+        
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        if(sessionStorage.getItem("admin_logged_in") !== "true") window.location.href = "login.html";
+        // Security Check
+        if(sessionStorage.getItem("admin_logged_in") !== "true") {
+            window.location.href = "login.html";
+        }
 
         const codeList = document.getElementById('code-list');
 
-        onValue(ref(db, 'settings/referralCodes'), (snap) => {
+        // Fetch Codes Realtime
+        onValue(ref(db, 'settings/referralCodes'), (snapshot) => {
             codeList.innerHTML = '';
-            if(snap.exists()) {
-                snap.forEach(c => {
+            
+            if(snapshot.exists()) {
+                snapshot.forEach(child => {
+                    const code = child.val();
+                    const key = child.key;
+
                     const li = document.createElement('li');
                     li.innerHTML = `
-                        <span>${c.val()}</span>
-                        <span class="del-btn" onclick="delCode('${c.key}')">✖</span>
+                        <span class="code-text">${code}</span>
+                        <div class="del-btn" onclick="delCode('${key}')" title="Delete">✖</div>
                     `;
                     codeList.appendChild(li);
                 });
             } else {
-                codeList.innerHTML = '<p>No codes active. Default: ADMIN123</p>';
+                codeList.innerHTML = `
+                    <p class="empty-msg">
+                        No custom codes found.<br>
+                        <small>(Default 'ADMIN123' might still work if hardcoded)</small>
+                    </p>`;
             }
         });
 
+        // Add Code Function
         window.addCode = () => {
-            const val = document.getElementById('new-code').value;
-            if(val) {
-                push(ref(db, 'settings/referralCodes'), val);
-                document.getElementById('new-code').value = '';
+            const input = document.getElementById('new-code');
+            const code = input.value.trim();
+
+            if(code) {
+                push(ref(db, 'settings/referralCodes'), code)
+                    .then(() => {
+                        input.value = '';
+                        // alert("Code Added Successfully!"); // Optional Alert
+                    })
+                    .catch(err => alert("Error: " + err.message));
+            } else {
+                alert("Please write a code first!");
             }
         }
 
+        // Delete Code Function
         window.delCode = (key) => {
-            if(confirm('Delete this code?')) remove(ref(db, 'settings/referralCodes/' + key));
+            if(confirm("Are you sure you want to delete this code? Users won't be able to register with it anymore.")) {
+                remove(ref(db, 'settings/referralCodes/' + key));
+            }
         }
     </script>
 </body>
