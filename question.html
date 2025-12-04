@@ -2,65 +2,244 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>Game Settings</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Control & Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Orbitron:wght@500&display=swap" rel="stylesheet">
     <style>
-        body { background: #111; color: white; font-family: 'Poppins', sans-serif; padding: 20px; }
-        .back { color: #aaa; text-decoration: none; }
-        .card { background: #1a1a1a; padding: 20px; border-radius: 10px; margin-top: 20px; max-width: 500px; border: 1px solid #333; }
-        label { display: block; margin-top: 10px; color: #aaa; }
-        input { width: 100%; padding: 10px; background: #333; border: 1px solid #444; color: white; margin-top: 5px; box-sizing: border-box; }
-        .btn { background: #00ff00; color: black; border: none; padding: 10px 20px; margin-top: 20px; cursor: pointer; font-weight: bold; width: 100%; }
-        
-        .note { font-size: 0.8rem; color: #ff0055; margin-top: 20px; }
+        body {
+            background: #050505;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #aaa;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            transition: 0.3s;
+        }
+        .back-btn:hover { color: #00ff00; }
+
+        h2 { margin: 0; color: #00ff00; font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
+
+        /* Sections */
+        .card {
+            background: #111;
+            border: 1px solid #333;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .card-title {
+            color: #00ff00;
+            margin-top: 0;
+            border-bottom: 1px solid #222;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        label {
+            display: block;
+            color: #ccc;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            margin-top: 15px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            background: #222;
+            border: 1px solid #444;
+            color: white;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus { border-color: #00ff00; background: #000; }
+
+        /* Buttons */
+        .save-btn {
+            background: linear-gradient(90deg, #00ff00, #00cc00);
+            color: black;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+        }
+        .save-btn:hover { transform: translateY(-2px); box-shadow: 0 0 20px rgba(0, 255, 0, 0.4); }
+
+        /* Status Badge */
+        .status-badge {
+            font-size: 0.8rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: #333;
+            color: #aaa;
+        }
+        .live { background: #00ff00; color: black; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
     </style>
 </head>
 <body>
-    <a href="home.html" class="back">⬅ Dashboard</a>
-    <h2 style="color: #00ff00;">GAME SETTINGS</h2>
 
-    <div class="card">
-        <h3>⏱ Time Settings</h3>
-        
-        <label>Question View Time (Seconds)</label>
-        <input type="number" id="view-time" value="15">
+    <div class="container">
+        <div class="header">
+            <a href="home.html" class="back-btn">⬅</a>
+            <h2>GAME CONTROLLER</h2>
+        </div>
 
-        <label>Answer Time (Seconds)</label>
-        <input type="number" id="ans-time" value="25">
-        
-        <button class="btn" onclick="saveSettings()">UPDATE SETTINGS</button>
-    </div>
+        <!-- Section 1: Schedule -->
+        <div class="card">
+            <h3 class="card-title">
+                🗓 Game Schedule
+                <span id="game-status" class="status-badge">Checking...</span>
+            </h3>
+            
+            <label>Game Start Date & Time</label>
+            <input type="datetime-local" id="start-time">
 
-    <div class="note">
-        * বর্তমানে প্রশ্নগুলো ইউজারের ফাইলে সেট করা আছে। আপনি চাইলে ডাটাবেস কানেক্টেড ডাইনামিক প্রশ্ন ফিচার অ্যাড করতে পারেন।
+            <label>Game End Date & Time</label>
+            <input type="datetime-local" id="end-time">
+            
+            <p style="font-size: 0.8rem; color: #777; margin-top: 10px;">
+                * এই সময়ের বাইরে ইউজাররা "Play" বাটনে ক্লিক করতে পারবে না।
+            </p>
+        </div>
+
+        <!-- Section 2: Questions & Limits -->
+        <div class="card">
+            <h3 class="card-title">❓ Question Settings</h3>
+
+            <label>Total Questions per User</label>
+            <input type="number" id="q-limit" placeholder="Ex: 10">
+
+            <p style="font-size: 0.8rem; color: #777; margin-top: 10px;">
+                * একজন ইউজার গেমটিতে সর্বোচ্চ কতটি প্রশ্ন পাবে।
+            </p>
+        </div>
+
+        <!-- Section 3: Timer -->
+        <div class="card">
+            <h3 class="card-title">⏱ Timer Config</h3>
+
+            <div style="display: flex; gap: 15px;">
+                <div style="flex: 1;">
+                    <label>View Time (Sec)</label>
+                    <input type="number" id="view-time" placeholder="15">
+                </div>
+                <div style="flex: 1;">
+                    <label>Answer Time (Sec)</label>
+                    <input type="number" id="ans-time" placeholder="25">
+                </div>
+            </div>
+        </div>
+
+        <button class="save-btn" onclick="saveAllSettings()">UPDATE GAME SETTINGS</button>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getDatabase, ref, update, get } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+        import { getDatabase, ref, update, onValue } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
+        // Config
         const firebaseConfig = { apiKey: "AIzaSyBVwD0U7_QeX8EyOrZ4fm7OG_ow1b391-M", authDomain: "game-f739d.firebaseapp.com", databaseURL: "https://game-f739d-default-rtdb.firebaseio.com", projectId: "game-f739d", storageBucket: "game-f739d.firebasestorage.app", messagingSenderId: "744868437950", appId: "1:744868437950:web:622410843c8aeb229463ef" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // Auth Check
         if(sessionStorage.getItem("admin_logged_in") !== "true") window.location.href = "login.html";
 
-        // Load current settings
-        get(ref(db, 'settings/timer')).then(snap => {
-            if(snap.exists()) {
-                document.getElementById('view-time').value = snap.val().view || 15;
-                document.getElementById('ans-time').value = snap.val().answer || 25;
+        // Load Settings
+        const configRef = ref(db, 'settings/gameConfig');
+        
+        onValue(configRef, (snapshot) => {
+            const data = snapshot.val();
+            if(data) {
+                if(data.startTime) document.getElementById('start-time').value = data.startTime;
+                if(data.endTime) document.getElementById('end-time').value = data.endTime;
+                document.getElementById('q-limit').value = data.questionLimit || 10;
+                document.getElementById('view-time').value = data.viewTime || 15;
+                document.getElementById('ans-time').value = data.answerTime || 25;
+
+                updateStatus(data.startTime, data.endTime);
             }
         });
 
-        window.saveSettings = () => {
-            const v = document.getElementById('view-time').value;
-            const a = document.getElementById('ans-time').value;
-            
-            update(ref(db, 'settings/timer'), {
-                view: parseInt(v),
-                answer: parseInt(a)
-            }).then(() => alert("Settings Updated!"));
+        function updateStatus(start, end) {
+            const now = new Date().getTime();
+            const sTime = new Date(start).getTime();
+            const eTime = new Date(end).getTime();
+            const badge = document.getElementById('game-status');
+
+            if(start && end) {
+                if(now >= sTime && now <= eTime) {
+                    badge.innerText = "🔴 LIVE NOW";
+                    badge.className = "status-badge live";
+                } else if (now < sTime) {
+                    badge.innerText = "⏳ UPCOMING";
+                    badge.className = "status-badge";
+                } else {
+                    badge.innerText = "🛑 EXPIRED";
+                    badge.className = "status-badge";
+                }
+            } else {
+                badge.innerText = "NOT SET";
+            }
+        }
+
+        window.saveAllSettings = () => {
+            const startTime = document.getElementById('start-time').value;
+            const endTime = document.getElementById('end-time').value;
+            const qLimit = document.getElementById('q-limit').value;
+            const viewTime = document.getElementById('view-time').value;
+            const ansTime = document.getElementById('ans-time').value;
+
+            if(!startTime || !endTime) {
+                alert("Please set both Start and End time!");
+                return;
+            }
+
+            update(configRef, {
+                startTime: startTime,
+                endTime: endTime,
+                questionLimit: parseInt(qLimit),
+                viewTime: parseInt(viewTime),
+                answerTime: parseInt(ansTime)
+            }).then(() => {
+                alert("✅ Game Configuration Updated Successfully!");
+            }).catch(e => alert("Error: " + e.message));
         }
     </script>
 </body>
