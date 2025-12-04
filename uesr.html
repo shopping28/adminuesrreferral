@@ -2,101 +2,261 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>User Control</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Control - Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
     <style>
-        body { background: #111; color: white; font-family: 'Poppins', sans-serif; padding: 20px; }
-        .back { color: #aaa; text-decoration: none; font-size: 0.9rem; }
-        h2 { color: #00ff00; border-bottom: 1px solid #333; padding-bottom: 10px; }
-        
-        .tabs { margin-bottom: 20px; }
-        .tab-btn { background: none; border: 1px solid #333; color: #aaa; padding: 10px 20px; cursor: pointer; }
-        .active-tab { background: #00ff00; color: black; border-color: #00ff00; font-weight: bold; }
+        body {
+            background: #111;
+            color: white;
+            font-family: 'Poppins', sans-serif;
+            padding: 20px;
+            margin: 0;
+        }
 
-        .user-card { background: #1a1a1a; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #333; }
-        .pending { border-left-color: orange; }
-        .approved { border-left-color: green; }
-        .blocked { border-left-color: red; opacity: 0.7; }
+        .header {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: #aaa;
+            font-size: 1.2rem;
+            margin-right: 15px;
+            transition: 0.3s;
+        }
+        .back-btn:hover { color: #00ff00; }
+
+        h2 { margin: 0; color: #00ff00; text-shadow: 0 0 10px rgba(0, 255, 0, 0.3); }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            color: #aaa;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Poppins', sans-serif;
+            transition: 0.3s;
+            flex: 1;
+        }
+
+        .tab-btn:hover { background: #222; }
         
-        .info { font-size: 0.9rem; }
-        .btn-group button { margin-left: 5px; padding: 5px 10px; cursor: pointer; border: none; border-radius: 4px; color: white; }
-        .btn-approve { background: green; }
-        .btn-block { background: red; }
-        .btn-unblock { background: orange; }
+        .active-tab {
+            background: #00ff00;
+            color: black;
+            border-color: #00ff00;
+            font-weight: bold;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+        }
+
+        /* User List */
+        #list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .user-card {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 5px solid #555;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+
+        /* Status Colors */
+        .pending { border-left-color: #ff9800; } /* Orange */
+        .approved { border-left-color: #00ff00; } /* Green */
+        .blocked { border-left-color: #ff0055; opacity: 0.7; } /* Red */
+
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .info-text strong { font-size: 1.1rem; display: block; }
+        .info-text small { color: #aaa; }
+        
+        .ref-badge {
+            background: #333;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        /* Action Buttons */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+            border-top: 1px solid #333;
+            padding-top: 10px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-accept { background: #00ff00; color: black; }
+        .btn-accept:hover { background: #00cc00; }
+
+        .btn-reject { background: #ff0055; color: white; }
+        .btn-reject:hover { background: #cc0044; }
+
+        .btn-block { background: #333; color: white; border: 1px solid #555; }
+        .btn-block:hover { background: #ff0055; border-color: #ff0055; }
+
+        .btn-unblock { background: #ff9800; color: black; }
+
+        @media (min-width: 600px) {
+            .user-card { flex-direction: row; align-items: center; justify-content: space-between; }
+            .btn-group { border-top: none; margin-top: 0; padding-top: 0; width: 200px; }
+        }
     </style>
 </head>
 <body>
-    <a href="home.html" class="back">⬅ Dashboard</a>
-    <h2>USER MANAGEMENT</h2>
 
+    <div class="header">
+        <a href="home.html" class="back-btn">⬅ Dashboard</a>
+        <h2>USER MANAGEMENT</h2>
+    </div>
+
+    <!-- Tabs -->
     <div class="tabs">
         <button class="tab-btn active-tab" onclick="filter('pending')">Pending Requests</button>
         <button class="tab-btn" onclick="filter('approved')">Active Users</button>
-        <button class="tab-btn" onclick="filter('blocked')">Blocked</button>
+        <button class="tab-btn" onclick="filter('blocked')">Blocked Users</button>
     </div>
 
-    <div id="list">Loading...</div>
+    <!-- User List Container -->
+    <div id="list">
+        <p style="text-align: center; color: #555;">Loading users...</p>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
         import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
+        // Firebase Config
         const firebaseConfig = { apiKey: "AIzaSyBVwD0U7_QeX8EyOrZ4fm7OG_ow1b391-M", authDomain: "game-f739d.firebaseapp.com", databaseURL: "https://game-f739d-default-rtdb.firebaseio.com", projectId: "game-f739d", storageBucket: "game-f739d.firebasestorage.app", messagingSenderId: "744868437950", appId: "1:744868437950:web:622410843c8aeb229463ef" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        if(sessionStorage.getItem("admin_logged_in") !== "true") window.location.href = "login.html";
+        // Security Check
+        if(sessionStorage.getItem("admin_logged_in") !== "true") {
+            window.location.href = "login.html";
+        }
 
         let allUsers = [];
         let currentFilter = 'pending';
-
         const listDiv = document.getElementById('list');
 
-        onValue(ref(db, 'users'), (snap) => {
+        // Fetch Users
+        onValue(ref(db, 'users'), (snapshot) => {
             allUsers = [];
-            snap.forEach(child => {
-                allUsers.push({ id: child.key, ...child.val() });
-            });
+            if(snapshot.exists()){
+                snapshot.forEach(child => {
+                    // Admin ke list e dekhabo na
+                    if(child.val().role !== 'admin') {
+                        allUsers.push({ id: child.key, ...child.val() });
+                    }
+                });
+            }
             render();
         });
 
+        // Filter Function
         window.filter = (type) => {
             currentFilter = type;
+            
+            // UI Update
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-tab'));
             event.target.classList.add('active-tab');
+            
             render();
         }
 
+        // Render List
         function render() {
             listDiv.innerHTML = '';
             const filtered = allUsers.filter(u => u.status === currentFilter);
             
-            if(filtered.length === 0) { listDiv.innerHTML = '<p style="color:#555;">No users found.</p>'; return; }
+            if(filtered.length === 0) {
+                listDiv.innerHTML = `<p style="text-align:center; color:#555; margin-top:50px;">No ${currentFilter} users found.</p>`;
+                return;
+            }
 
             filtered.forEach(u => {
                 const div = document.createElement('div');
                 div.className = `user-card ${u.status}`;
                 
-                let btns = '';
-                if(u.status === 'pending') btns = `<button class="btn-approve" onclick="setStatus('${u.id}', 'approved')">Accept</button> <button class="btn-block" onclick="setStatus('${u.id}', 'blocked')">Reject</button>`;
-                if(u.status === 'approved') btns = `<button class="btn-block" onclick="setStatus('${u.id}', 'blocked')">Block</button>`;
-                if(u.status === 'blocked') btns = `<button class="btn-unblock" onclick="setStatus('${u.id}', 'approved')">Unblock</button>`;
+                let buttons = '';
+                
+                if(u.status === 'pending') {
+                    buttons = `
+                        <button class="action-btn btn-accept" onclick="setStatus('${u.id}', 'approved')">Accept</button>
+                        <button class="action-btn btn-reject" onclick="setStatus('${u.id}', 'blocked')">Reject</button>
+                    `;
+                } else if (u.status === 'approved') {
+                    buttons = `
+                        <button class="action-btn btn-block" onclick="setStatus('${u.id}', 'blocked')">Block User</button>
+                    `;
+                } else if (u.status === 'blocked') {
+                    buttons = `
+                        <button class="action-btn btn-unblock" onclick="setStatus('${u.id}', 'approved')">Unblock</button>
+                    `;
+                }
 
                 div.innerHTML = `
-                    <div class="info">
-                        <strong>${u.name}</strong> <br>
-                        Phone: ${u.phone} <br>
-                        Ref: ${u.referralUsed}
+                    <div class="user-info">
+                        <div class="info-text">
+                            <strong>${u.name}</strong>
+                            <small>${u.phone} | ${u.email}</small>
+                        </div>
+                        <span class="ref-badge">Ref: ${u.referralUsed}</span>
                     </div>
-                    <div class="btn-group">${btns}</div>
+                    <div class="btn-group">
+                        ${buttons}
+                    </div>
                 `;
                 listDiv.appendChild(div);
             });
         }
 
+        // Status Update Function
         window.setStatus = (uid, status) => {
-            if(confirm('Are you sure?')) {
-                update(ref(db, 'users/' + uid), { status: status });
+            let msg = status === 'approved' ? "Approve this user?" : "Block this user?";
+            if(confirm(msg)) {
+                update(ref(db, 'users/' + uid), { status: status })
+                .then(() => {
+                    // alert("Status Updated!"); 
+                })
+                .catch(err => alert("Error: " + err.message));
             }
         }
     </script>
