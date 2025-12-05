@@ -3,24 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Settings & Category</title>
+    <title>Admin - Game Controller</title>
     <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600&family=Orbitron:wght@500&display=swap" rel="stylesheet">
     <style>
         body { background: #050505; color: white; font-family: 'Hind Siliguri', sans-serif; padding: 20px; margin: 0; }
         .container { max-width: 800px; margin: 0 auto; }
+        
+        /* Header */
         .header { display: flex; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
         .back-btn { text-decoration: none; color: #aaa; font-size: 1.2rem; margin-right: 15px; }
         h2 { margin: 0; color: #00ff00; font-family: 'Orbitron', sans-serif; }
-        .card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        
+        /* Cards */
+        .card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         h3 { color: #00f2ff; margin-top: 0; border-bottom: 1px solid #222; padding-bottom: 10px; }
+        
+        /* Inputs */
         label { display: block; color: #ccc; margin-top: 10px; font-size: 0.9rem; }
-        input { width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-top: 5px; box-sizing: border-box; font-family: 'Hind Siliguri', sans-serif; }
+        input[type="text"], input[type="number"], input[type="datetime-local"] { width: 100%; padding: 10px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-top: 5px; box-sizing: border-box; }
+        input[type="file"] { background: #1a1a1a; padding: 10px; width: 100%; border: 1px solid #444; border-radius: 5px; margin-top: 5px; color: #fff; }
+
+        /* Buttons */
         .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 15px; font-family: 'Hind Siliguri', sans-serif; transition: 0.3s; }
         .btn:hover { transform: scale(1.02); }
+        .btn-purple { background: #9d00ff; color: white; }
         .btn-green { background: #00ff00; color: black; }
         .btn-blue { background: #00f2ff; color: black; }
-        .cat-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 10px; }
-        .cat-item { background: #1a1a1a; padding: 10px; border: 1px solid #333; border-radius: 5px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* Stock Status */
+        .stock-info { background: rgba(157, 0, 255, 0.1); border: 1px solid #9d00ff; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 15px; }
+        .stock-count { font-size: 1.8rem; font-family: 'Orbitron'; color: #d48aff; font-weight: bold; }
+        
+        /* Custom Checkbox */
+        .switch-container { display: flex; align-items: center; margin-top: 15px; background: rgba(0, 255, 136, 0.1); padding: 10px; border-radius: 5px; border: 1px solid #00ff88; }
+        
+        /* Categories */
+        .cat-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; margin-top: 10px; }
+        .cat-item { background: #222; padding: 8px; border-radius: 5px; border: 1px solid #444; display: flex; justify-content: space-between; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -31,11 +50,38 @@
             <h2>GAME CONTROLLER</h2>
         </div>
 
-        <!-- 1. Game Settings -->
-        <div class="card">
-            <h3>⚙️ গেম সেটিংস</h3>
+        <!-- 1. Question Stock & Manual Mode Section -->
+        <div class="card" style="border-top: 3px solid #9d00ff;">
+            <h3>📚 প্রশ্ন ব্যাংক ও মোড সেটিংস</h3>
+            
+            <!-- Stock Counter -->
+            <div class="stock-info">
+                <span>স্টকে বর্তমান প্রশ্ন সংখ্যা</span>
+                <div class="stock-count" id="q-stock">Connecting...</div>
+            </div>
+
+            <!-- Manual Mode Toggle -->
+            <div class="switch-container">
+                <input type="checkbox" id="use-custom-check" style="width: 20px; height: 20px; margin-right: 10px; cursor: pointer;">
+                <label style="margin:0; color: #00ff88; font-weight: bold; cursor:pointer;" for="use-custom-check">
+                    ম্যানুয়াল প্রশ্ন মোড চালু করুন (Stock Mode)
+                </label>
+            </div>
+
+            <!-- Upload Area -->
+            <div style="margin-top: 20px; background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px dashed #555;">
+                <label style="margin-top:0;">➕ নতুন প্রশ্ন যুক্ত করুন (JSON):</label>
+                <input type="file" id="json-file" accept=".json">
+                <button class="btn btn-purple" onclick="uploadJSON()">স্টকে প্রশ্ন যুক্ত করুন (Add to Stock)</button>
+                <p id="upload-status" style="margin-top:10px; font-size:0.8rem; color: yellow; text-align: center;"></p>
+            </div>
+        </div>
+
+        <!-- 2. General Game Settings -->
+        <div class="card" style="border-top: 3px solid #00ff00;">
+            <h3>⚙️ সাধারণ গেম সেটিংস</h3>
             <div style="display:flex; gap:10px;">
-                <div style="flex:1;"><label>প্রশ্ন সংখ্যা</label><input type="number" id="q-limit" value="10"></div>
+                <div style="flex:1;"><label>প্রশ্ন সংখ্যা (প্রতি গেমে)</label><input type="number" id="q-limit" value="10"></div>
                 <div style="flex:1;"><label>প্রশ্ন দেখার সময় (সে:)</label><input type="number" id="view-time" value="15"></div>
                 <div style="flex:1;"><label>উত্তর দেওয়ার সময় (সে:)</label><input type="number" id="ans-time" value="25"></div>
             </div>
@@ -46,21 +92,18 @@
             <button class="btn btn-green" onclick="saveConfig()">সেটিংস সেভ করুন</button>
         </div>
 
-        <!-- 2. Add Category -->
-        <div class="card">
-            <h3>📂 ক্যাটাগরি তৈরি করুন</h3>
-            <p style="color:#aaa; font-size:0.9rem;">এখানে শুধু বিষয় লিখুন। গেম শুরুর সময় API এই বিষয়ের ওপর প্রশ্ন বানাবে।</p>
+        <!-- 3. AI Categories (Only used if Manual Mode is OFF) -->
+        <div class="card" style="border-top: 3px solid #00f2ff;">
+            <h3>📂 AI ক্যাটাগরি (Backup)</h3>
+            <p style="color:#777; font-size:0.8rem;">যদি ম্যানুয়াল মোড বন্ধ থাকে, তবে AI এখান থেকে বিষয় বেছে নিবে।</p>
             
-            <input type="text" id="new-cat" placeholder="বিষয় লিখুন (যেমন: বাংলাদেশ, মহাকাশ, ফুটবল)">
-            <button class="btn btn-blue" onclick="addCategory()">ক্যাটাগরি যুক্ত করুন</button>
-        </div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="new-cat" placeholder="বিষয় লিখুন (যেমন: বিজ্ঞান)">
+                <button class="btn btn-blue" style="width:100px; margin-top:5px;" onclick="addCategory()">যুক্ত করুন</button>
+            </div>
 
-        <!-- 3. Active Categories -->
-        <div class="card">
-            <h3>✅ সক্রিয় ক্যাটাগরি</h3>
-            <p style="font-size: 0.8rem; color: #777;">যেগুলোতে টিক দিবেন, ইউজাররা সেই বিষয়ের ওপর প্রশ্ন পাবে।</p>
             <div class="cat-list" id="cat-list-div">Loading...</div>
-            <button class="btn btn-green" onclick="saveActiveCats()">আপডেট করুন</button>
+            <button class="btn btn-green" style="margin-top:15px; background:#005c61; color:white;" onclick="saveActiveCats()">ক্যাটাগরি লিস্ট আপডেট করুন</button>
         </div>
     </div>
 
@@ -72,12 +115,15 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
+        // Security Check
         if(sessionStorage.getItem("admin_logged_in") !== "true") window.location.href = "login.html";
 
+        // References
         const configRef = ref(db, 'settings/gameConfig');
         const catRef = ref(db, 'categories');
+        const manualQRef = ref(db, 'manualQuestions');
 
-        // Load Settings
+        // 1. Load Settings & Stock Count
         onValue(configRef, (snap) => {
             const d = snap.val();
             if(d) {
@@ -86,10 +132,76 @@
                 document.getElementById('q-limit').value = d.questionLimit || 10;
                 document.getElementById('view-time').value = d.viewTime || 15;
                 document.getElementById('ans-time').value = d.answerTime || 25;
+                // Checkbox State
+                document.getElementById('use-custom-check').checked = d.useCustomQuestions || false;
             }
         });
 
-        // Load Categories
+        // Live Stock Counter
+        onValue(manualQRef, (snap) => {
+            const count = snap.exists() ? Object.keys(snap.val()).length : 0;
+            document.getElementById('q-stock').innerText = count;
+        });
+
+        // 2. Upload Function (Append Mode)
+        window.uploadJSON = () => {
+            const fileInput = document.getElementById('json-file');
+            const status = document.getElementById('upload-status');
+
+            if(fileInput.files.length === 0) {
+                alert("দয়া করে একটি JSON ফাইল সিলেক্ট করুন!");
+                return;
+            }
+
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+
+            status.innerText = "ফাইল প্রসেস করা হচ্ছে...";
+
+            reader.onload = (e) => {
+                try {
+                    const json = JSON.parse(e.target.result);
+                    
+                    // Validation
+                    if(!Array.isArray(json)) throw new Error("JSON ফাইলটি অবশ্যই Array ফরম্যাটে হতে হবে [...]");
+                    if(json.length === 0) throw new Error("ফাইলটি খালি!");
+                    if(!json[0].q || !json[0].c) throw new Error("JSON ফরম্যাট সঠিক নয় (q, a, c মিসিং)");
+
+                    // Prepare Updates (Append with Push ID)
+                    const updates = {};
+                    json.forEach(q => {
+                        const newKey = push(manualQRef).key; // Create unique ID
+                        updates[newKey] = q;
+                    });
+
+                    // Send to Firebase
+                    update(manualQRef, updates).then(() => {
+                        status.innerText = `✅ সফল! ${json.length} টি নতুন প্রশ্ন স্টকে যুক্ত হয়েছে।`;
+                        alert("প্রশ্ন স্টকে জমা হয়েছে!");
+                        fileInput.value = ''; // Reset input
+                    });
+
+                } catch(err) {
+                    status.innerText = "❌ ভুল: " + err.message;
+                    alert("ফাইল ফরম্যাট সঠিক নয়!");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // 3. Save All Configs
+        window.saveConfig = () => {
+            update(configRef, {
+                startTime: document.getElementById('start-time').value,
+                endTime: document.getElementById('end-time').value,
+                questionLimit: parseInt(document.getElementById('q-limit').value),
+                viewTime: parseInt(document.getElementById('view-time').value),
+                answerTime: parseInt(document.getElementById('ans-time').value),
+                useCustomQuestions: document.getElementById('use-custom-check').checked // Save Switch State
+            }).then(() => alert("✅ সকল সেটিংস সেভ হয়েছে!"));
+        }
+
+        // 4. Category Management (Visual)
         onValue(catRef, (snap) => {
             const list = document.getElementById('cat-list-div');
             list.innerHTML = '';
@@ -103,41 +215,26 @@
                     const isChecked = activeCats.includes(catName) ? 'checked' : ''; 
                     
                     div.innerHTML = `
-                        <label style="margin:0; cursor:pointer;">
-                            <input type="checkbox" value="${catName}" ${isChecked}> ${catName}
+                        <label style="margin:0; cursor:pointer; display:flex; align-items:center;">
+                            <input type="checkbox" value="${catName}" ${isChecked} style="width:auto; margin-right:8px;"> ${catName}
                         </label>
-                        <span onclick="delCat('${catId}')" style="color:red; cursor:pointer;">✖</span>
+                        <span onclick="delCat('${catId}')" style="color:#ff4444; cursor:pointer; font-weight:bold;">✕</span>
                     `;
                     list.appendChild(div);
                 });
             });
         });
 
-        window.saveConfig = () => {
-            update(configRef, {
-                startTime: document.getElementById('start-time').value,
-                endTime: document.getElementById('end-time').value,
-                questionLimit: parseInt(document.getElementById('q-limit').value),
-                viewTime: parseInt(document.getElementById('view-time').value),
-                answerTime: parseInt(document.getElementById('ans-time').value)
-            }).then(() => alert("✅ সেটিংস সেভ হয়েছে!"));
-        }
-
         window.addCategory = () => {
             const name = document.getElementById('new-cat').value;
-            if(name) {
-                push(catRef, { name: name });
-                document.getElementById('new-cat').value = '';
-            }
+            if(name) { push(catRef, { name: name }); document.getElementById('new-cat').value = ''; }
         }
 
-        window.delCat = (key) => {
-            if(confirm("Delete this category?")) remove(ref(db, 'categories/' + key));
-        }
+        window.delCat = (key) => { if(confirm("মুছে ফেলতে চান?")) remove(ref(db, 'categories/' + key)); }
 
         window.saveActiveCats = () => {
             const selected = [];
-            document.querySelectorAll('input[type="checkbox"]:checked').forEach(c => selected.push(c.value));
+            document.querySelectorAll('#cat-list-div input:checked').forEach(c => selected.push(c.value));
             update(configRef, { activeCats: selected.join(',') }).then(() => alert("✅ ক্যাটাগরি আপডেট হয়েছে!"));
         }
     </script>
