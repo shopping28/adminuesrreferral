@@ -8,36 +8,23 @@
     <style>
         body { background: #050505; color: white; font-family: 'Hind Siliguri', sans-serif; padding: 20px; margin: 0; }
         .container { max-width: 800px; margin: 0 auto; }
-        
-        /* Header */
         .header { display: flex; align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
         .back-btn { text-decoration: none; color: #aaa; font-size: 1.2rem; margin-right: 15px; }
         h2 { margin: 0; color: #00ff00; font-family: 'Orbitron', sans-serif; }
-        
-        /* Cards */
         .card { background: #111; border: 1px solid #333; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
         h3 { color: #00f2ff; margin-top: 0; border-bottom: 1px solid #222; padding-bottom: 10px; }
-        
-        /* Inputs */
         label { display: block; color: #ccc; margin-top: 15px; font-size: 1rem; font-weight: bold; }
-        input[type="number"], input[type="text"] { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-top: 5px; box-sizing: border-box; font-size: 1.1rem; text-align: center; }
-        input[type="file"] { background: #1a1a1a; padding: 10px; width: 100%; border: 1px solid #444; border-radius: 5px; margin-top: 5px; color: #fff; }
-
-        /* Buttons */
+        input { width: 100%; padding: 12px; background: #222; border: 1px solid #444; color: white; border-radius: 5px; margin-top: 5px; box-sizing: border-box; text-align: center; }
         .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-top: 20px; font-family: 'Hind Siliguri', sans-serif; transition: 0.3s; font-size: 1rem; }
         .btn:hover { transform: scale(1.02); }
         .btn-purple { background: #9d00ff; color: white; }
         .btn-green { background: #00ff00; color: black; }
         .btn-red { background: #ff0055; color: white; margin-top: 10px; }
-
-        /* Stock Status */
         .stock-info { background: rgba(157, 0, 255, 0.1); border: 1px solid #9d00ff; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 15px; }
         .stock-count { font-size: 2.5rem; font-family: 'Orbitron'; color: #d48aff; font-weight: bold; }
-        .limit-display { color: #00ff00; font-size: 1rem; margin-top: 5px; }
-
-        /* Guide */
-        .guide { background: #222; padding: 10px; font-size: 0.8rem; color: #aaa; border-radius: 5px; margin-top: 10px; }
-        code { background: #000; padding: 2px 5px; color: #00ff88; }
+        
+        /* Time Grid */
+        .time-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
     </style>
 </head>
 <body>
@@ -48,50 +35,47 @@
             <h2>GAME CONTROLLER</h2>
         </div>
 
-        <!-- 1. Question Stock Section -->
+        <!-- Stock Section -->
         <div class="card" style="border-top: 3px solid #9d00ff;">
             <h3>📚 প্রশ্ন ব্যাংক (Question Stock)</h3>
-            
-            <!-- Stock Counter -->
             <div class="stock-info">
                 <span>বর্তমানে স্টকে প্রশ্ন আছে</span>
                 <div class="stock-count" id="q-stock">Loading...</div>
-                <div class="limit-display">প্রতি ইউজার পাবে: <span id="display-limit">--</span> টি প্রশ্ন</div>
             </div>
-
-            <!-- Upload Area -->
-            <div style="margin-top: 20px; background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px dashed #555;">
-                <label style="margin-top:0;">➕ নতুন প্রশ্ন আপলোড করুন (JSON File):</label>
-                <div class="guide">
-                    Format: <code>[{"q":"Question?","a":["Op1","Op2","Op3","Op4"],"c":"Op1"}]</code>
-                </div>
-                <input type="file" id="json-file" accept=".json">
-                <button class="btn btn-purple" onclick="uploadJSON()">Add Questions to Stock</button>
-                <p id="upload-status" style="margin-top:10px; font-size:0.9rem; color: yellow; text-align: center;"></p>
-            </div>
-
-            <!-- Clear Stock -->
-            <button class="btn btn-red" onclick="clearStock()">🗑️ সকল প্রশ্ন ডিলিট করুন (Clear Stock)</button>
+            <label>➕ নতুন প্রশ্ন আপলোড (JSON):</label>
+            <input type="file" id="json-file" accept=".json">
+            <button class="btn btn-purple" onclick="uploadJSON()">Add Questions</button>
+            <p id="upload-status" style="margin-top:10px; color: yellow; text-align: center;"></p>
+            <button class="btn btn-red" onclick="clearStock()">🗑️ Clear Stock</button>
         </div>
 
-        <!-- 2. Game Logic Settings -->
+        <!-- Game Settings -->
         <div class="card" style="border-top: 3px solid #00ff00;">
-            <h3>⚙️ গেম সেটিংস (Game Logic)</h3>
+            <h3>⚙️ গেম সেটিংস (Time & Limit)</h3>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <!-- Main Limit Setting -->
-                <div style="grid-column: span 2;">
-                    <label style="color: #00ff00;">🎯 প্রতি ইউজারের প্রশ্নের লিমিট (Question Limit)</label>
-                    <input type="number" id="q-limit" placeholder="Example: 10">
-                    <small style="color:#777;">ইউজার গেমে ঢুকলে এই কয়টি প্রশ্ন পাবে।</small>
-                </div>
-
+            <!-- TIME SETTINGS (Start & End) -->
+            <div class="time-grid">
                 <div>
-                    <label>চোখ বুলানোর সময় (সেকেন্ড)</label>
+                    <label style="color: #00ff88;">🟢 শুরুর সময় (Start):</label>
+                    <input type="datetime-local" id="start-time" style="color: #00ff88;">
+                </div>
+                <div>
+                    <label style="color: #ff0055;">🔴 শেষের সময় (End):</label>
+                    <input type="datetime-local" id="end-time" style="color: #ff0055;">
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 15px;">
+                <div style="grid-column: span 2;">
+                    <label>🎯 ইউজারের প্রশ্নের লিমিট (Limit):</label>
+                    <input type="number" id="q-limit" placeholder="Example: 10">
+                </div>
+                <div>
+                    <label>দেখা (Sec):</label>
                     <input type="number" id="view-time" placeholder="15">
                 </div>
                 <div>
-                    <label>উত্তর দেওয়ার সময় (সেকেন্ড)</label>
+                    <label>উত্তর (Sec):</label>
                     <input type="number" id="ans-time" placeholder="25">
                 </div>
             </div>
@@ -102,23 +86,23 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-        import { getDatabase, ref, update, push, onValue, set, remove } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+        import { getDatabase, ref, update, push, onValue, remove } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
         const firebaseConfig = { apiKey: "AIzaSyBVwD0U7_QeX8EyOrZ4fm7OG_ow1b391-M", authDomain: "game-f739d.firebaseapp.com", databaseURL: "https://game-f739d-default-rtdb.firebaseio.com", projectId: "game-f739d", storageBucket: "game-f739d.firebasestorage.app", messagingSenderId: "744868437950", appId: "1:744868437950:web:622410843c8aeb229463ef" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Security Check
         if(sessionStorage.getItem("admin_logged_in") !== "true") window.location.href = "login.html";
 
         const configRef = ref(db, 'settings/gameConfig');
         const manualQRef = ref(db, 'manualQuestions');
 
-        // 1. Load Data
+        // Load Settings
         onValue(configRef, (snap) => {
             const d = snap.val() || {};
+            if(d.startTime) document.getElementById('start-time').value = d.startTime;
+            if(d.endTime) document.getElementById('end-time').value = d.endTime; // Load End Time
             document.getElementById('q-limit').value = d.questionLimit || 10;
-            document.getElementById('display-limit').innerText = d.questionLimit || 10;
             document.getElementById('view-time').value = d.viewTime || 15;
             document.getElementById('ans-time').value = d.answerTime || 25;
         });
@@ -128,67 +112,42 @@
             document.getElementById('q-stock').innerText = count;
         });
 
-        // 2. Save Config
+        // Save Settings
         window.saveConfig = () => {
+            const startTime = document.getElementById('start-time').value;
+            const endTime = document.getElementById('end-time').value;
             const limit = parseInt(document.getElementById('q-limit').value);
             const view = parseInt(document.getElementById('view-time').value);
             const ans = parseInt(document.getElementById('ans-time').value);
 
-            if(limit < 1) return alert("Limit must be at least 1");
+            if(!startTime) return alert("Please set a Start Time!");
 
             update(configRef, {
+                startTime: startTime,
+                endTime: endTime, // Save End Time
                 questionLimit: limit,
                 viewTime: view,
                 answerTime: ans
-            }).then(() => alert("✅ সেটিংস সেভ হয়েছে!"));
+            }).then(() => alert("✅ All Settings Saved!"));
         }
 
-        // 3. Upload Questions
         window.uploadJSON = () => {
             const fileInput = document.getElementById('json-file');
-            const status = document.getElementById('upload-status');
-
-            if(fileInput.files.length === 0) return alert("ফাইল সিলেক্ট করুন!");
-
+            if(fileInput.files.length === 0) return alert("Select File!");
             const file = fileInput.files[0];
             const reader = new FileReader();
-
-            status.innerText = "Processing...";
-
             reader.onload = (e) => {
                 try {
                     const json = JSON.parse(e.target.result);
-                    
-                    if(!Array.isArray(json)) throw new Error("JSON must be an Array []");
-                    if(json.length === 0) throw new Error("File is empty");
-                    if(!json[0].q || !json[0].c) throw new Error("Invalid Format");
-
                     const updates = {};
-                    json.forEach(q => {
-                        const newKey = push(manualQRef).key;
-                        updates[newKey] = q;
-                    });
-
-                    update(manualQRef, updates).then(() => {
-                        status.innerText = `✅ Added ${json.length} questions!`;
-                        alert("প্রশ্ন স্টকে জমা হয়েছে!");
-                        fileInput.value = '';
-                    });
-
-                } catch(err) {
-                    status.innerText = "❌ Error: " + err.message;
-                    alert("JSON ফাইল সঠিক নয়!");
-                }
+                    json.forEach(q => { updates[push(manualQRef).key] = q; });
+                    update(manualQRef, updates).then(() => { alert("Questions Added!"); fileInput.value = ''; });
+                } catch(err) { alert("Invalid JSON!"); }
             };
             reader.readAsText(file);
         }
 
-        // 4. Clear Stock
-        window.clearStock = () => {
-            if(confirm("সতর্কতা: আপনি কি স্টকের সব প্রশ্ন ডিলিট করতে চান?")) {
-                remove(manualQRef).then(() => alert("স্টক খালি করা হয়েছে!"));
-            }
-        }
+        window.clearStock = () => { if(confirm("Delete ALL Questions?")) remove(manualQRef); }
     </script>
 </body>
 </html>
