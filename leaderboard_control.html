@@ -16,7 +16,7 @@
 </head>
 <body>
     <a href="home.html" class="back">⬅ Dashboard</a>
-    <h2 style="color: #00ff00;">LEADERBOARD & POINTS</h2>
+    <h2 style="color: #00ff00;">LEADERBOARD (TOP 10)</h2>
 
     <table>
         <thead>
@@ -24,6 +24,7 @@
                 <th>Rank</th>
                 <th>Name</th>
                 <th>Phone</th>
+                <th>Solved (Qty)</th>
                 <th>Current Score</th>
                 <th>Action</th>
             </tr>
@@ -50,15 +51,22 @@
             // Sort by Points High to Low
             users.sort((a, b) => (b.points || 0) - (a.points || 0));
 
+            // Take only Top 10
+            const topUsers = users.slice(0, 10);
+
             const tbody = document.getElementById('lb-body');
             tbody.innerHTML = '';
 
-            users.forEach((u, index) => {
+            topUsers.forEach((u, index) => {
+                // Calculate Question Count (Assuming 10 points per question)
+                const solvedCount = Math.floor((u.points || 0) / 10);
+
                 const tr = document.createElement('tr');
                 tr.innerHTML = `
                     <td>#${index + 1}</td>
                     <td>${u.name}</td>
                     <td>${u.phone}</td>
+                    <td style="color: cyan; font-weight:bold;">${solvedCount} টি</td>
                     <td>
                         <input type="number" id="score-${u.id}" value="${u.points || 0}">
                     </td>
